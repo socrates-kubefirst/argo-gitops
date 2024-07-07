@@ -9,7 +9,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 - Expose Argo
 
 ```
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}' 
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 ```
 
 - Get Argo password
@@ -34,3 +34,12 @@ helm upgrade --install confluent-operator confluentinc/confluent-for-kubernetes 
 create Argo application:
 
 kubectl apply -f kafka-application.yaml
+
+Once everything is running:
+
+kubeclt get svc -n confluent
+
+kubectl patch svc controlcenter-0-internal -p '{"spec": {"type": "LoadBalancer"}}'
+
+
+`kubeclt get svc -n confluent` again to get the ip then <ip>:9021 to get control center dash

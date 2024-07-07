@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: confluent-platform
+  name: snowplow-platform
   namespace: argocd
 spec:
   project: default
@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: 'https://github.com/socrates-kubefirst/argo-gitops.git'
     targetRevision: HEAD
-    path: kafka
+    path: snow-plow
     directory:
       recurse: true
 
