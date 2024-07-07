@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: 'https://github.com/socrates-kubefirst/argo-gitops.git'
     targetRevision: HEAD
-    path: .
+    path: apps
     directory:
       recurse: true
 
