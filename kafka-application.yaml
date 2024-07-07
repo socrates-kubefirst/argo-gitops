@@ -7,7 +7,7 @@ spec:
   project: default
 
   source:
-    repoURL: 'https://github.com/your-repo/confluent-configs.git'
+    repoURL: 'https://github.com/socrates-kubefirst/argo-gitops.git'
     targetRevision: HEAD
     path: .
     directory:
