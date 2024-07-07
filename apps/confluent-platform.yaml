@@ -9,8 +9,8 @@ spec:
   image:
     application: confluentinc/cp-zookeeper:7.6.0
     init: confluentinc/confluent-init-container:2.8.0
-  dataVolumeCapacity: 10Gi
-  logVolumeCapacity: 10Gi
+  dataVolumeCapacity: 5Gi
+  logVolumeCapacity: 1Gi
 ---
 apiVersion: platform.confluent.io/v1beta1
 kind: Kafka
@@ -22,7 +22,7 @@ spec:
   image:
     application: confluentinc/cp-server:7.6.0
     init: confluentinc/confluent-init-container:2.8.0
-  dataVolumeCapacity: 100Gi
+  dataVolumeCapacity: 20Gi
   metricReporter:
     enabled: true
   dependencies:
@@ -53,7 +53,7 @@ spec:
   image:
     application: confluentinc/cp-ksqldb-server:7.6.0
     init: confluentinc/confluent-init-container:2.8.0
-  dataVolumeCapacity: 10Gi
+  dataVolumeCapacity: 2Gi
 ---
 apiVersion: platform.confluent.io/v1beta1
 kind: ControlCenter
@@ -65,7 +65,7 @@ spec:
   image:
     application: confluentinc/cp-enterprise-control-center:7.6.0
     init: confluentinc/confluent-init-container:2.8.0
-  dataVolumeCapacity: 10Gi
+  dataVolumeCapacity: 5Gi
   dependencies:
     schemaRegistry:
       url: http://schemaregistry.confluent.svc.cluster.local:8081
