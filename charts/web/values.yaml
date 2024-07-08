@@ -1,9 +1,23 @@
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+
 ingress:
   enabled: true
   annotations: {}
   hosts:
-    - host: localhost  # Use localhost if you don't have a domain
+    - host: localhost
       paths:
         - path: /
           pathType: Prefix
+          port: 80
   tls: []

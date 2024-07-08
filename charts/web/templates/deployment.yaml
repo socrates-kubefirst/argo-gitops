@@ -1,29 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-web
+  name: {{ include "web.fullname" . }}
   labels:
-    app: {{ .Release.Name }}-web
+    {{- include "web.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-web
+      app: {{ include "web.name" . }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-web
+        {{- include "web.labels" . | nindent 8 }}
     spec:
       containers:
-      - name: web
+      - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
-        - containerPort: 80
-        volumeMounts:
-        - name: web-content
-          mountPath: /usr/share/nginx/html
-      volumes:
-      - name: web-content
-        configMap:
-          name: web-content
+        - containerPort: {{ .Values.service.port }}
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
