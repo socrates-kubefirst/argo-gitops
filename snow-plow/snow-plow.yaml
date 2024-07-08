@@ -6,7 +6,18 @@ metadata:
 
 ---
 
-# Scala Stream Collector ConfigMap
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug-pod
+  namespace: snowplow
+spec:
+  containers:
+  - name: debug-container
+    image: curlimages/curl:7.73.0
+    command: ["sh", "-c", "sleep infinity"]
+
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -45,7 +56,6 @@ data:
         enabled = false
         name = "n3pc"
         fallbackNetworkUserId = "00000000-0000-4000-A000-000000000000"
-        forwardedProtocolHeader = "X-Forwarded-Proto"
       }
 
       redirectMacro {
@@ -56,8 +66,8 @@ data:
         enabled = false
         statusCode = 302
         headers = {
-          Location = "https://127.0.0.1/",
-          X-Custom = "something"
+            Location = "https://127.0.0.1/",
+            X-Custom = "something"
         }
         body = "302, redirecting"
       }
@@ -69,7 +79,7 @@ data:
 
         sink {
           enabled = kafka
-          brokers = "kafka.confluent:9092"
+          brokers = "kafka:9092"
           retries = 0
         }
 
@@ -79,22 +89,59 @@ data:
           timeLimit = 1000
         }
       }
-    }
 
-    akka {
-      loglevel = DEBUG
-      loggers = ["akka.event.slf4j.Slf4jLogger"]
+      akka {
+        loglevel = DEBUG
+        loggers = ["akka.event.slf4j.Slf4jLogger"]
 
-      http.server {
-        remote-address-header = on
-        raw-request-uri-header = on
+        http.server {
+          remote-address-header = on
+          raw-request-uri-header = on
 
-        parsing {
-          max-uri-length = 32768
-          uri-parsing-mode = relaxed
+          parsing {
+            max-uri-length = 32768
+            uri-parsing-mode = relaxed
+          }
         }
       }
     }
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scala-stream-collector
+  namespace: snowplow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scala-stream-collector
+  template:
+    metadata:
+      labels:
+        app: scala-stream-collector
+    spec:
+      containers:
+      - name: scala-stream-collector
+        image: snowplow/scala-stream-collector-kafka:2.9.2
+        command: [ "--config", "/snowplow/config/config.hocon" ]
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-volume
+          mountPath: /snowplow/config
+        env:
+        - name: SP_JAVA_OPTS
+          value: "-Xms512m -Xmx512m"
+      volumes:
+      - name: config-volume
+        configMap:
+          name: scala-stream-collector-config
+          items:
+          - key: config.hocon
+            path: config.hocon
 
 ---
 
@@ -132,16 +179,36 @@ data:
   resolver.json: |
     {
       "schema": "iglu:com.snowplowanalytics.iglu/resolver-config/jsonschema/1-0-1",
-      "data": {
-        "cacheSize": 500,
-        "repositories": [
-          {
+        "data": {
+          "cacheSize": 500,
+          "repositories": [
+            {
             "name": "Iglu Central",
             "priority": 0,
             "vendorPrefixes": [ "com.snowplowanalytics" ],
             "connection": {
               "http": {
-                "uri": "http://iglu-server:8081/api",
+                "uri": "http://iglucentral.com"
+              }
+            }
+          },
+          {
+            "name": "Iglu Central - GCP Mirror",
+            "priority": 1,
+            "vendorPrefixes": [ "com.snowplowanalytics" ],
+            "connection": {
+              "http": {
+                "uri": "http://mirror01.iglucentral.com"
+              }
+            }
+          },
+          {
+            "name": "Custom Server",
+            "priority": 0,
+            "vendorPrefixes": [ "com.example_company" ],
+            "connection": {
+              "http": {
+                "uri": "http://iglu-server.snowplow.svc.cluster.local:8081/api",
                 "apikey": "e5d6a3d6-7b3c-4d0a-9e6a-123456789abc"
               }
             }
@@ -149,92 +216,6 @@ data:
         ]
       }
     }
-
----
-
-# Iglu Server ConfigMap
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: iglu-server-config
-  namespace: snowplow
-data:
-  config.hocon: |
-    {
-      "repoServer": {
-        "interface": "0.0.0.0",
-        "port": 8081
-      },
-      "database": {
-        "host": "iglu-postgres",
-        "dbname": "igludb",
-        "username": "sp_user",
-        "password": "sp_password"
-      },
-      "superApiKey": "e5d6a3d6-7b3c-4d0a-9e6a-123456789abc",
-      "adminApiKeys": [
-        {
-          "uid": "admin",
-          "key": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "permissions": ["schemas:create", "schemas:read", "schemas:update", "schemas:delete", "apikeys:create", "apikeys:read", "apikeys:update", "apikeys:delete"]
-        }
-      ]
-    }
-
----
-
-# Scala Stream Collector Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: scala-stream-collector
-  namespace: snowplow
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: scala-stream-collector
-  template:
-    metadata:
-      labels:
-        app: scala-stream-collector
-    spec:
-      containers:
-      - name: scala-stream-collector
-        image: snowplow/scala-stream-collector-kafka:2.9.2
-        args: ["--config", "/snowplow/config/config.hocon"]
-        ports:
-        - containerPort: 8080
-        volumeMounts:
-        - name: config-volume
-          mountPath: /snowplow/config
-          subPath: config.hocon
-        env:
-        - name: SP_JAVA_OPTS
-          value: "-Xms512m -Xmx512m"
-      volumes:
-      - name: config-volume
-        configMap:
-          name: scala-stream-collector-config
-          items:
-          - key: config.hocon
-            path: config.hocon
-
----
-
-# Scala Stream Collector Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: scala-stream-collector
-  namespace: snowplow
-spec:
-  selector:
-    app: scala-stream-collector
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
 
 ---
 
@@ -260,27 +241,27 @@ spec:
         args: ["--config", "/snowplow/config/config.hocon", "--resolver", "file:/snowplow/config/resolver.json"]
         volumeMounts:
         - name: config-volume
-          mountPath: /snowplow/config/config.hocon
-          subPath: config.hocon
-        - name: resolver-volume
-          mountPath: /snowplow/config/resolver.json
-          subPath: resolver.json
-        env:
-        - name: SP_JAVA_OPTS
-          value: "-Xms512m -Xmx512m"
+          mountPath: /snowplow/config
       volumes:
       - name: config-volume
         configMap:
           name: stream-enrich-config
-          items:
-          - key: config.hocon
-            path: config.hocon
-      - name: resolver-volume
-        configMap:
-          name: stream-enrich-config
-          items:
-          - key: resolver.json
-            path: resolver.json
+
+---
+
+# Scala Stream Collector Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: scala-stream-collector
+  namespace: snowplow
+spec:
+  selector:
+    app: scala-stream-collector
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
 
 ---
 
@@ -298,55 +279,3 @@ spec:
       port: 8081
       targetPort: 8081
 
----
-
-# Iglu PostgreSQL Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: iglu-postgres
-  namespace: snowplow
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: iglu-postgres
-  template:
-    metadata:
-      labels:
-        app: iglu-postgres
-    spec:
-      containers:
-      - name: iglu-postgres
-        image: postgres:13
-        ports:
-        - containerPort: 5432
-        env:
-        - name: POSTGRES_USER
-          value: sp_user
-        - name: POSTGRES_PASSWORD
-          value: sp_password
-        - name: POSTGRES_DB
-          value: igludb
-        volumeMounts:
-        - name: pgdata
-          mountPath: /var/lib/postgresql/data
-      volumes:
-      - name: pgdata
-        persistentVolumeClaim:
-          claimName: pgdata-pvc
-
----
-
-# Iglu PostgreSQL PersistentVolumeClaim
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: pgdata-pvc
-  namespace: snowplow
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10
