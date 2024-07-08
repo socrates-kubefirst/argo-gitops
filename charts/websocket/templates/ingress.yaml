@@ -1,19 +1,36 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-websocket-ingress
-  namespace: {{ .Release.Namespace }}
+  name: {{ include "websocket.fullname" . }}
+  labels:
+    {{- include "websocket.labels" . | nindent 4 }}
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    {{- range $key, $value := .Values.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
 spec:
   rules:
-  - host: {{ .Values.ingress.hosts[0].host | default "localhost" }}
-    http:
-      paths:
-      - path: {{ .Values.ingress.hosts[0].paths[0].path | default "/" }}
-        pathType: {{ .Values.ingress.hosts[0].paths[0].pathType | default "Prefix" }}
-        backend:
-          service:
-            name: {{ .Release.Name }}-websocket
-            port:
-              number: 8000
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "websocket.fullname" $ }}
+                port:
+                  number: {{ .port }}
+          {{- end }}
+    {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}

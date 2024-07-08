@@ -1,9 +1,9 @@
 replicaCount: 1
 
 image:
-  repository: socrates12345/websocket
-  pullPolicy: IfNotPresent
+  repository: myrepo/websocket
   tag: "latest"
+  pullPolicy: IfNotPresent
 
 service:
   type: ClusterIP
@@ -13,10 +13,9 @@ ingress:
   enabled: true
   annotations: {}
   hosts:
-    - host: localhost  # Use localhost if you don't have a domain
+    - host: websocket.local
       paths:
         - path: /
           pathType: Prefix
+          port: 8000
   tls: []
-
-resources: {}

@@ -1,44 +1,35 @@
+{{/*
+Expand the name of the chart.
+*/}}
+{{- define "websocket.name" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Create a default fullname.
+*/}}
 {{- define "websocket.fullname" -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" (include "websocket.name" .) .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 {{- end -}}
 
+{{/*
+Expand the chart name.
+*/}}
 {{- define "websocket.chart" -}}
-{{- .Chart.Name | replace "-" " " | title -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version -}}
 {{- end -}}
 
-{{- define "websocket.release" -}}
-{{- .Release.Name -}}
-{{- end -}}
-
-{{- define "websocket.ingress" -}}
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: {{ include "websocket.fullname" . }}-ingress
-  labels:
-    {{- include "websocket.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  rules:
-  {{- range .Values.ingress.hosts }}
-  - host: {{ .host }}
-    http:
-      paths:
-      {{- range .paths }}
-      - path: {{ .path }}
-        pathType: {{ .pathType }}
-        backend:
-          service:
-            name: {{ include "websocket.fullname" $.Release.Name }}
-            port:
-              number: 8000
-      {{- end }}
-  {{- end }}
-  {{- with .Values.ingress.tls }}
-  tls:
-  {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{/*
+Common labels
+*/}}
+{{- define "websocket.labels" -}}
+helm.sh/chart: {{ include "websocket.chart" . }}
+{{ include "websocket.name" . }}-version: {{ .Chart.Version }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/name: {{ include "websocket.name" . }}
 {{- end -}}
