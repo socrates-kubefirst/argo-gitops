@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-websocket
+  labels:
+    app: {{ .Release.Name }}-websocket
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-websocket
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-websocket
+    spec:
+      containers:
+      - name: websocket
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8000

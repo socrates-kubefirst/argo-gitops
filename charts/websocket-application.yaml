@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: websocket
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/socrates-kubefirst/argo-gitops.git'  # Update with your repository URL
+    targetRevision: HEAD
+    path: charts/websocket
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

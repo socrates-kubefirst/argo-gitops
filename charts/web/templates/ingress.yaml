@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-web-ingress
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: {{ .Values.ingress.hosts[0].host | default "localhost" }}
+    http:
+      paths:
+      - path: {{ .Values.ingress.hosts[0].paths[0].path | default "/" }}
+        pathType: {{ .Values.ingress.hosts[0].paths[0].pathType | default "Prefix" }}
+        backend:
+          service:
+            name: {{ .Release.Name }}-web
+            port:
+              number: 80

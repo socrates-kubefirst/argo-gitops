@@ -1,0 +1,22 @@
+replicaCount: 1
+
+image:
+  repository: socrates12345/websocket
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: true
+  annotations: {}
+  hosts:
+    - host: localhost  # Use localhost if you don't have a domain
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources: {}

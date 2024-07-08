@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-events-processor
+  labels:
+    app: {{ .Release.Name }}-events-processor
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-events-processor
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-events-processor
+    spec:
+      containers:
+      - name: events-processor
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: SP_JAVA_OPTS
+          value: "-Xms512m -Xmx512m"
