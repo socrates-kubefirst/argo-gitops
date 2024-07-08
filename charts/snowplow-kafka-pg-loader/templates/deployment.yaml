@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-snowplow-kafka-pg-loader
+  labels:
+    app: {{ .Release.Name }}-snowplow-kafka-pg-loader
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-snowplow-kafka-pg-loader
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-snowplow-kafka-pg-loader
+    spec:
+      containers:
+      - name: snowplow-kafka-pg-loader
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+        env:
+        - name: POSTGRES_URL
+          valueFrom:
+            configMapKeyRef:
+              name: snowplow-kafka-pg-loader-config
+              key: postgres.url
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: snowplow-kafka-pg-loader-config
+              key: postgres.username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: snowplow-kafka-pg-loader-config
+              key: postgres.password
+        - name: KAFKA_BROKERS
+          valueFrom:
+            configMapKeyRef:
+              name: snowplow-kafka-pg-loader-config
+              key: kafka.brokers
+        - name: KAFKA_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              name: snowplow-kafka-pg-loader-config
+              key: kafka.topic

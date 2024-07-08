@@ -56,6 +56,7 @@ data:
         enabled = false
         name = "n3pc"
         fallbackNetworkUserId = "00000000-0000-4000-A000-000000000000"
+        forwardedProtocolHeader = "X-Forwarded-Proto"
       }
 
       redirectMacro {
@@ -79,7 +80,7 @@ data:
 
         sink {
           enabled = kafka
-          brokers = "kafka:9092"
+          brokers = "kafka.confluent.svc.cluster.local:29092:29092"
           retries = 0
         }
 
@@ -89,23 +90,38 @@ data:
           timeLimit = 1000
         }
       }
+    }
 
-      akka {
-        loglevel = DEBUG
-        loggers = ["akka.event.slf4j.Slf4jLogger"]
+    akka {
+      loglevel = DEBUG
+      loggers = ["akka.event.slf4j.Slf4jLogger"]
 
-        http.server {
-          remote-address-header = on
-          raw-request-uri-header = on
+      http.server {
+        remote-address-header = on
+        raw-request-uri-header = on
 
-          parsing {
-            max-uri-length = 32768
-            uri-parsing-mode = relaxed
-          }
+        parsing {
+          max-uri-length = 32768
+          uri-parsing-mode = relaxed
         }
       }
     }
 
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: scala-stream-collector
+  namespace: snowplow
+spec:
+  selector:
+    app: scala-stream-collector
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
 ---
 
 apiVersion: apps/v1
@@ -126,9 +142,7 @@ spec:
       containers:
       - name: scala-stream-collector
         image: snowplow/scala-stream-collector-kafka:2.9.2
-        command: [ "--config", "/snowplow/config/config.hocon" ]
-        ports:
-        - containerPort: 8080
+        args: ["--config", "/snowplow/config/config.hocon"]
         volumeMounts:
         - name: config-volume
           mountPath: /snowplow/config
@@ -139,9 +153,6 @@ spec:
       - name: config-volume
         configMap:
           name: scala-stream-collector-config
-          items:
-          - key: config.hocon
-            path: config.hocon
 
 ---
 
@@ -165,7 +176,7 @@ data:
         }
         sourceSink {
           enabled = kafka
-          brokers = "kafka.confluent:9092"
+          brokers = "kafka.confluent.svc.cluster.local:29092"
           retries = 0
         }
         buffer {

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: snowplow-kafka-pg-loader-config
+  labels:
+    app: {{ .Release.Name }}-snowplow-kafka-pg-loader
+data:
+  config.conf: |
+    kafka {
+      brokers = "kafka.confluent.svc.cluster.local:29092"
+      topic = "snowplow_enriched_good"
+      consumerGroupId = "kafkaPGLoader"
+    }
+
+    postgres {
+      driver = "org.postgresql.Driver"
+      url = "jdbc:postgresql://iglu-postgres.snowplow.svc.cluster.local:5432/igludb?currentSchema=atomic"
+      username = "sp_user"
+      password = "sp_password"
+      groupid = "GroupID"
+      numberOfThreads = 1
+    }
+  kafka.brokers: kafka.confluent.svc.cluster.local:29092
+  kafka.topic: snowplow_enriched_good
+  postgres.url: jdbc:postgresql://iglu-postgres.snowplow.svc.cluster.local:5432/igludb?currentSchema=atomic
+  postgres.username: sp_user
+  postgres.password: sp_password
