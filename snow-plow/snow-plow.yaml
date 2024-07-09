@@ -80,7 +80,7 @@ data:
 
         sink {
           enabled = kafka
-          brokers = "kafka.confluent.svc.cluster.local:9071:9071"
+          brokers = "kafka.confluent.svc.cluster.local:9092:9092"
           retries = 0
         }
 
@@ -176,7 +176,7 @@ data:
         }
         sourceSink {
           enabled = kafka
-          brokers = "kafka.confluent.svc.cluster.local:9071"
+          brokers = "kafka.confluent.svc.cluster.local:9092"
           retries = 0
         }
         buffer {
