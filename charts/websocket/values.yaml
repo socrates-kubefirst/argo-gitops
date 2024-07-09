@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: myrepo/websocket
+  repository: socrates12345/websocket
   tag: "latest"
   pullPolicy: IfNotPresent
 
