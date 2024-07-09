@@ -80,7 +80,7 @@ data:
 
         sink {
           enabled = kafka
-          brokers = "kafka-0-internal.confluent.svc.cluster.local:9092:9092"
+          brokers = "kafka-0-internal.confluent.svc.cluster.local:29092:29092"
           retries = 0
         }
 
