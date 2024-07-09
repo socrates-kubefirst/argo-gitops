@@ -176,7 +176,7 @@ data:
         }
         sourceSink {
           enabled = kafka
-          brokers = "kafka-0-internal.confluent.svc.cluster.local:9092"
+          brokers = "kafka.confluent.svc.cluster.local:9071"
           retries = 0
         }
         buffer {
