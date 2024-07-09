@@ -20,7 +20,7 @@ Create a default fullname.
 Expand the chart name.
 */}}
 {{- define "web.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | quote -}}
 {{- end -}}
 
 {{/*
@@ -28,8 +28,8 @@ Common labels
 */}}
 {{- define "web.labels" -}}
 helm.sh/chart: {{ include "web.chart" . }}
-{{ include "web.name" . }}-version: {{ .Chart.Version }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/name: {{ include "web.name" . }}
+{{ include "web.name" . }}-version: "{{ .Chart.Version }}"
+app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+app.kubernetes.io/instance: {{ .Release.Name | quote }}
+app.kubernetes.io/name: {{ include "web.name" . | quote }}
 {{- end -}}

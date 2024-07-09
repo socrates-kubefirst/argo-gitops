@@ -10,4 +10,4 @@ spec:
   - port: {{ .Values.service.port }}
     targetPort: {{ .Values.service.port }}
   selector:
-    app: {{ include "web.name" . }}
+    app.kubernetes.io/name: {{ include "web.name" . }}
