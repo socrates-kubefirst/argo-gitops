@@ -119,8 +119,8 @@ spec:
     app: scala-stream-collector
   ports:
     - protocol: TCP
-      port: 8081
-      targetPort: 8081
+      port: 8080
+      targetPort: 8080
   type: LoadBalancer
 ---
 
@@ -257,22 +257,6 @@ spec:
       - name: config-volume
         configMap:
           name: stream-enrich-config
-
----
-
-# Scala Stream Collector Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: scala-stream-collector
-  namespace: snowplow
-spec:
-  selector:
-    app: scala-stream-collector
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
 
 ---
 
