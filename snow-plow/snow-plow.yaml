@@ -40,12 +40,6 @@ data:
         secure = false
       }
 
-      cors {
-        access-control-allow-origin = "*"
-        access-control-allow-methods = "GET, PUT, POST, DELETE, PATCH, OPTIONS"
-        access-control-allow-headers = "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization"
-      }
-      
       cookie {
         enabled = true
         expiration = "365 days"
