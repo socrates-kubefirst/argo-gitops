@@ -22,15 +22,15 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, Authorization"
   hosts:
     - paths:
-        - path: /a/(.*)
+        - path: /api/(.*)
           pathType: Prefix
           backend:
             service:
               name: web
               port:
                 number: 80
-        - path: /()
-          pathType: ImplementationSpecific
+        - path: /
+          pathType: Prefix
           backend:
             service:
               name: web
