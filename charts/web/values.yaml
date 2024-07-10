@@ -9,8 +9,6 @@ service:
   type: ClusterIP
   port: 80
 
-resources: {}
-
 ingress:
   enabled: true
   annotations: {}
@@ -19,5 +17,3 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-          port: 80
-  tls: []
