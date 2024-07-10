@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: socrates12345/events-processor
   pullPolicy: IfNotPresent
-  tag: "1.0.16"
+  tag: "1.0.17"
 
 service:
   type: ClusterIP
