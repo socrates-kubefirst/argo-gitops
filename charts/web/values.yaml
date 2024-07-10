@@ -32,7 +32,7 @@ ingress:
           pathType: ImplementationSpecific
           backend:
             service:
-              name: scala-stream-collector
+              name: web
               port:
-                number: 8080
+                number: 80
   tls: []
