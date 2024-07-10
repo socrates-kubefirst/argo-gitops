@@ -29,7 +29,7 @@ ingress:
               port:
                 number: 80
         - path: /api/
-          pathType: ImplementationSpecific
+          pathType: Prefix
           backend:
             service:
               name: web
