@@ -16,7 +16,7 @@ data:
             ;p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1;
             n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdnjs.cloudflare.com/ajax/libs/snowplow/2.18.2/sp.js","snowplow"));
 
-            var collectorHost = window.location.hostname + ':8080/api';
+            var collectorHost = window.location.hostname + '/api';
 
             window.snowplow('newTracker', 'cf', collectorHost, {
               appId: 'testApp',
