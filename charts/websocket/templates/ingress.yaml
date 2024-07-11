@@ -8,7 +8,6 @@ metadata:
       {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.className | quote }}
   rules:
     {{- range .Values.ingress.hosts }}
     - http:
