@@ -4,6 +4,9 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
   annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/enable-websocket: "true"
     {{- range $key, $value := .Values.ingress.annotations }}
       {{ $key }}: {{ $value | quote }}
     {{- end }}
@@ -19,7 +22,7 @@ spec:
               service:
                 name: {{ $.Release.Name }}-service
                 port:
-                  number: 8000
+                  number: {{ $.Values.service.port }}
           {{- end }}
     {{- end }}
 {{- end }}
