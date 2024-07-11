@@ -1,0 +1,25 @@
+Control Center has been successfully deployed.
+
+You can access it using the following details:
+
+{{- if .Values.controlcenter.ingress.enabled }}
+1. **Via Ingress:**
+   - **URL:** https://{{ .Values.controlcenter.ingress.host }}
+   - **TLS Secret Name:** {{ .Values.controlcenter.ingress.tlsSecret }}
+
+{{- else if eq .Values.controlcenter.service.type "LoadBalancer" }}
+1. **Via LoadBalancer:**
+   {{- range $i, $p := .Values.controlcenter.ports }}
+   - **Port {{ $p.containerPort }}:**
+     - **External IP:** Run `kubectl get svc --namespace {{ .Release.Namespace }} -w {{ .Release.Name }}-controlcenter` to get the external IP
+   {{- end }}
+{{- else }}
+1. **Via ClusterIP:**
+   {{- range $i, $p := .Values.controlcenter.ports }}
+   - **Port {{ $p.containerPort }}:**
+     - **Internal IP:** Run `kubectl get svc --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.clusterIP}" {{ .Release.Name }}-controlcenter`
+   {{- end }}
+{{- end }}
+
+To get the status of your Control Center deployment:
+
