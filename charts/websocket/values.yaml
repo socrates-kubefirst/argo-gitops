@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: socrates12345/websocket
-  tag: "1.0.3"
+  tag: "1.0.4"
   pullPolicy: IfNotPresent
 
 service:
@@ -14,7 +14,7 @@ ingress:
   annotations: {}
   hosts:
     - paths:
-        - path: /
+        - path: /consumer
           pathType: Prefix
 
 resources: {}
