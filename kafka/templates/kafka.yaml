@@ -25,3 +25,18 @@ spec:
     - name: {{ $key }}
       value: "{{ $value }}"
 {{- end }}
+  podTemplate:
+    initContainers:
+{{- if .Values.kafka.initContainers.enabled }}
+      - name: create-topics
+        image: confluentinc/cp-kafka:{{ .Values.versionNumber }}
+        command:
+          - sh
+          - -c
+          - >
+            for topic in {{ range .Values.kafka.initContainers.topics }}{{ .name }}={{ .partitions }}={{ .replicationFactor }}; {{ end }}
+            do
+              IFS="="; set -- $topic;
+              /usr/bin/kafka-topics --create --if-not-exists --zookeeper {{ .Values.kafka.environment.KAFKA_ZOOKEEPER_CONNECT }} --replication-factor $3 --partitions $2 --topic $1;
+            done
+{{- end }}

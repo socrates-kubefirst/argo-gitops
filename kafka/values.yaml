@@ -31,6 +31,18 @@ kafka:
     CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
     CONFLUENT_METRICS_ENABLE: 'true'
     CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+  initContainers:
+    enabled: true
+    topics:
+      - name: snowplow_raw_good
+        partitions: 3
+        replicationFactor: 1
+      - name: snowplow_enriched_good
+        partitions: 3
+        replicationFactor: 1
+      - name: snowplow_enriched_bad
+        partitions: 3
+        replicationFactor: 1
 
 controlcenter:
   ports:
