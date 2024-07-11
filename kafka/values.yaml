@@ -1,4 +1,4 @@
-versionNumber: 7.2.1
+versionNumber: 7.6.0
 namespace: confluent
 zookeeper:
   ports:
