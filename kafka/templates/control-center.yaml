@@ -1,0 +1,31 @@
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: ControlCenter
+metadata:
+  name: controlcenter
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  image:
+    application: confluentinc/cp-enterprise-control-center:{{ .Values.versionNumber }}
+    init: confluentinc/confluent-init-container:2.8.0
+  dataVolumeCapacity: 5Gi
+  dependencies:
+    schemaRegistry:
+      url: http://schemaregistry.{{ .Values.namespace }}.svc.cluster.local:8081
+    ksqldb:
+      - name: ksqldb
+        url: http://ksqldb.{{ .Values.namespace }}.svc.cluster.local:8088
+    connect:
+      - name: connect
+        url: http://connect.{{ .Values.namespace }}.svc.cluster.local:8083
+  ports:
+{{- range .Values.controlcenter.ports }}
+    - containerPort: {{ .containerPort }}
+      hostPort: {{ .hostPort }}
+{{- end }}
+  env:
+{{- range $key, $value := .Values.controlcenter.environment }}
+    - name: {{ $key }}
+      value: "{{ $value }}"
+{{- end }}

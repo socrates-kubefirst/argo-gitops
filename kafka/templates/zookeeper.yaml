@@ -1,0 +1,20 @@
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: Zookeeper
+metadata:
+  name: zookeeper
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 3
+  image:
+    application: confluentinc/cp-zookeeper:{{ .Values.versionNumber }}
+    init: confluentinc/confluent-init-container:2.8.0
+  dataVolumeCapacity: 5Gi
+  logVolumeCapacity: 1Gi
+  ports:
+    - containerPort: {{ .Values.zookeeper.ports.clientPort }}
+  env:
+    - name: ZOOKEEPER_CLIENT_PORT
+      value: "{{ .Values.zookeeper.environment.ZOOKEEPER_CLIENT_PORT }}"
+    - name: ZOOKEEPER_TICK_TIME
+      value: "{{ .Values.zookeeper.environment.ZOOKEEPER_TICK_TIME }}"

@@ -1,0 +1,12 @@
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: KsqlDB
+metadata:
+  name: ksqldb
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  image:
+    application: confluentinc/cp-ksqldb-server:{{ .Values.versionNumber }}
+    init: confluentinc/confluent-init-container:2.8.0
+  dataVolumeCapacity: 2Gi

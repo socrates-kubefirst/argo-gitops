@@ -1,0 +1,14 @@
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaRestProxy
+metadata:
+  name: kafkarestproxy
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  image:
+    application: confluentinc/cp-kafka-rest:{{ .Values.versionNumber }}
+    init: confluentinc/confluent-init-container:2.8.0
+  dependencies:
+    schemaRegistry:
+      url: http://schemaregistry.{{ .Values.namespace }}.svc.cluster.local:8081
