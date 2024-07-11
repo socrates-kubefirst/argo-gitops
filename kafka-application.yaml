@@ -10,8 +10,9 @@ spec:
     repoURL: 'https://github.com/socrates-kubefirst/argo-gitops.git'
     targetRevision: HEAD
     path: kafka
-    directory:
-      recurse: true
+    helm:
+      valueFiles:
+        - values.yaml
 
   destination:
     server: 'https://kubernetes.default.svc'
@@ -23,4 +24,3 @@ spec:
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
-

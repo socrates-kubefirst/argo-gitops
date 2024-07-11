@@ -1,0 +1,129 @@
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: Zookeeper
+metadata:
+  name: zookeeper
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 3
+  image:
+    application: confluentinc/cp-zookeeper:{{ .Values.versionNumber }}
+    init: confluentinc/confluent-init-container:2.8.0
+  dataVolumeCapacity: 5Gi
+  logVolumeCapacity: 1Gi
+  ports:
+    - containerPort: {{ .Values.zookeeper.ports.clientPort }}
+  env:
+    - name: ZOOKEEPER_CLIENT_PORT
+      value: "{{ .Values.zookeeper.environment.ZOOKEEPER_CLIENT_PORT }}"
+    - name: ZOOKEEPER_TICK_TIME
+      value: "{{ .Values.zookeeper.environment.ZOOKEEPER_TICK_TIME }}"
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: Kafka
+metadata:
+  name: kafka
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 3
+  image:
+    application: confluentinc/cp-server:{{ .Values.versionNumber }}
+    init: confluentinc/confluent-init-container:2.8.0
+  dataVolumeCapacity: 20Gi
+  metricReporter:
+    enabled: true
+  dependencies:
+    zookeeper:
+      endpoint: zookeeper.{{ .Values.namespace }}.svc.cluster.local:2181
+  ports:
+{{- range .Values.kafka.ports }}
+    - containerPort: {{ .containerPort }}
+      hostPort: {{ .hostPort }}
+{{- end }}
+  env:
+{{- range $key, $value := .Values.kafka.environment }}
+    - name: {{ $key }}
+      value: "{{ $value }}"
+{{- end }}
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: Connect
+metadata:
+  name: connect
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  image:
+    application: confluentinc/cp-server-connect:{{ .Values.versionNumber }}
+    init: confluentinc/confluent-init-container:2.8.0
+  dependencies:
+    kafka:
+      bootstrapEndpoint: kafka.{{ .Values.namespace }}.svc.cluster.local:9071
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: KsqlDB
+metadata:
+  name: ksqldb
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  image:
+    application: confluentinc/cp-ksqldb-server:{{ .Values.versionNumber }}
+    init: confluentinc/confluent-init-container:2.8.0
+  dataVolumeCapacity: 2Gi
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: ControlCenter
+metadata:
+  name: controlcenter
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  image:
+    application: confluentinc/cp-enterprise-control-center:{{ .Values.versionNumber }}
+    init: confluentinc/confluent-init-container:2.8.0
+  dataVolumeCapacity: 5Gi
+  dependencies:
+    schemaRegistry:
+      url: http://schemaregistry.{{ .Values.namespace }}.svc.cluster.local:8081
+    ksqldb:
+      - name: ksqldb
+        url: http://ksqldb.{{ .Values.namespace }}.svc.cluster.local:8088
+    connect:
+      - name: connect
+        url: http://connect.{{ .Values.namespace }}.svc.cluster.local:8083
+  ports:
+{{- range .Values.controlcenter.ports }}
+    - containerPort: {{ .containerPort }}
+      hostPort: {{ .hostPort }}
+{{- end }}
+  env:
+{{- range $key, $value := .Values.controlcenter.environment }}
+    - name: {{ $key }}
+      value: "{{ $value }}"
+{{- end }}
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: SchemaRegistry
+metadata:
+  name: schemaregistry
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 3
+  image:
+    application: confluentinc/cp-schema-registry:{{ .Values.versionNumber }}
+    init: confluentinc/confluent-init-container:2.8.0
+---
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaRestProxy
+metadata:
+  name: kafkarestproxy
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  image:
+    application: confluentinc/cp-kafka-rest:{{ .Values.versionNumber }}
+    init: confluentinc/confluent-init-container:2.8.0
+  dependencies:
+    schemaRegistry:
+      url: http://schemaregistry.{{ .Values.namespace }}.svc.cluster.local:8081
