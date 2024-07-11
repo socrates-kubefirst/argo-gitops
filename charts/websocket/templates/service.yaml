@@ -1,15 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-websocket
+  name: {{ .Release.Name }}-service
   labels:
-    app: {{ .Release.Name }}-websocket
+    app: {{ .Release.Name }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: 8000
       targetPort: 8000
-      protocol: TCP
-      name: http
   selector:
-    app: {{ .Release.Name }}-websocket
+    app: {{ .Release.Name }}
