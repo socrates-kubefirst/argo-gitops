@@ -5,8 +5,9 @@ metadata:
   namespace: {{ .Values.namespace }}
 spec:
   type: {{ .Values.controlcenter.service.type }}
-  ports:
-    - port: 9021
-      targetPort: 9021
   selector:
     app: {{ .Release.Name }}-controlcenter
+  ports:
+    - name: http
+      port: 9021
+      targetPort: 9021
