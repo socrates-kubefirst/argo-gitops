@@ -16,7 +16,7 @@ data:
             ;p[i].q=p[i].q||[];n=l.createElement(o);g=l.getElementsByTagName(o)[0];n.async=1;
             n.src=w;g.parentNode.insertBefore(n,g)}}(window,document,"script","https://cdnjs.cloudflare.com/ajax/libs/snowplow/2.18.2/sp.js","snowplow"));
 
-            var collectorHost = 'ca2056d6-51e8-465f-930c-efaf5a76622a.lb.civo.com:8080';
+            var collectorHost = '2dc544d7-32ce-4010-934e-d6930b941e67.lb.civo.com:8080';
 
             window.snowplow('newTracker', 'cf', collectorHost, {
               appId: 'testApp',
