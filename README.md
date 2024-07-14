@@ -58,7 +58,7 @@ kubectl patch svc controlcenter-0-internal -p '{"spec": {"type": "LoadBalancer"}
 
 `kubeclt get svc -n confluent` again to get the ip then <ip>:9021 to get control center dash
 
-```
+
 
 ## Architecture
 
