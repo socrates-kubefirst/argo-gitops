@@ -78,7 +78,7 @@ kubectl apply -f snowplow-application.yaml
 
 ```
 kubectl apply -f charts-application.yaml
-``
+```
 
 ## Architecture
 
