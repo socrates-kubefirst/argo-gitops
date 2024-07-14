@@ -6,6 +6,8 @@ from a new cluster to install kafka:
 kubectl create namespace argocd                                                                    
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
+
+
 - Expose Argo
 
 ```
@@ -19,6 +21,18 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 ```
 
 at this point you can log in using admin username and password above
+
+
+## Architecture
+
+![Argo Architecture](./architecture/argocd.webp)
+
+- decouple CI from CD, hence separate developer responsibilities from ops
+- Auditable because of version control
+- Everything is an application, combines watching repo to running on server
+- Dashboard and source file
+- makes devops easy which is critical for distributed systems
+
 
 
 run helm against repo:
@@ -37,12 +51,42 @@ kubectl apply -f kafka-application.yaml
 
 Once everything is running:
 
-kubeclt get svc -n confluent
+kubectl get svc -n confluent
 
 kubectl patch svc controlcenter-0-internal -p '{"spec": {"type": "LoadBalancer"}}'
 
 
 `kubeclt get svc -n confluent` again to get the ip then <ip>:9021 to get control center dash
+
+```
+
+## Architecture
+
+![Confluent Architecture](./architecture/kafka-archtecture.png)
+
+- view topics in real time
+- append only log similar to application logs, very performant (P.S 1billion record challenge?)
+- schema critical
+- support for binary protocols
+
+# Apply snowplow
+
+```
+kubectl apply -f snowplow-application.yaml
+```
+# Apply charts
+
+```
+kubectl apply -f charts-application.yaml
+``
+
+## Architecture
+
+![Snowplow Architecture](./architecture/architecture-snowplow.png)
+
+- Realtime datastreaming platform used on strava
+- defines specific pipeline
+- defines products, msg, events and their schemas and schema owners. Required for data prodocts
 
 # CI/CD Process for Continuous Integration and Deployment
 
