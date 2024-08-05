@@ -2,5 +2,5 @@ apiVersion: v2
 name: websocket
 description: A Helm chart for FastAPI WebSocket server
 version: "0.1"
-appVersion: "1.0.2"
+appVersion: "1.1.0"
 icon: "https://github.com/socrates-kubefirst/argo-gitops/blob/master/assets/ux.png"
