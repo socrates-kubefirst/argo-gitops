@@ -14,15 +14,16 @@ data:
         "security.protocol" = "SASL_SSL"
         "sasl.mechanisms" = "PLAIN"
         "sasl.username" = "UJXR2AHHSOHL2O4K"
-        "sasl.password" = "L4piWdT0pE4t+LiP5xLrkfWxmhePL8jdk0LaSX2N5cSevSBF1EHjr2oygqJX64FC"
+        "sasl.password" = "LZDE86rm7hlM8aLlDfiPv7uu3NhwP0we5QnKtZ72AMkj8yjKvNx/1U/sC4CSWVZ1"
       }
       consumerConf {
         "security.protocol" = "SASL_SSL"
         "sasl.mechanisms" = "PLAIN"
         "sasl.username" = "UJXR2AHHSOHL2O4K"
-        "sasl.password" = "L4piWdT0pE4t+LiP5xLrkfWxmhePL8jdk0LaSX2N5cSevSBF1EHjr2oygqJX64FC"
+        "sasl.password" = "LZDE86rm7hlM8aLlDfiPv7uu3NhwP0we5QnKtZ72AMkj8yjKvNx/1U/sC4CSWVZ1"
       }
     }
+
 
     postgres {
       driver = "org.postgresql.Driver"
@@ -32,3 +33,12 @@ data:
       groupid = "GroupID"
       numberOfThreads = 1
     }
+  kafka.brokers: pkc-12576z.us-west2.gcp.confluent.cloud:9092,kafka.confluent.svc.cluster.local:9092
+  kafka.topic: snowplow_enriched_good
+  kafka.security.protocol: SASL_SSL
+  kafka.sasl.mechanisms: PLAIN
+  kafka.sasl.username: UJXR2AHHSOHL2O4K
+  kafka.sasl.password: L4piWdT0pE4t+LiP5xLrkfWxmhePL8jdk0LaSX2N5cSevSBF1EHjr2oygqJX64FC
+  postgres.url: jdbc:postgresql://iglu-postgres.snowplow.svc.cluster.local:5432/igludb?currentSchema=atomic
+  postgres.username: sp_user
+  postgres.password: sp_password
