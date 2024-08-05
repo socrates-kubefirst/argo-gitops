@@ -200,7 +200,7 @@ data:
               sasl.mechanism = PLAIN
               client.dns.lookup = use_all_dns_ips
               auto.offset.reset = latest
-  }
+            }
         }
         buffer {
           byteLimit = 1000000
