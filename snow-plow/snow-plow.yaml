@@ -84,11 +84,11 @@ data:
           retries = 0
             producerConf {
               # Required connection configs for Kafka producer, consumer, and admin
-              security.protocol=SASL_SSL
-              sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username='UJXR2AHHSOHL2O4K' password='L4piWdT0pE4t+LiP5xLrkfWxmhePL8jdk0LaSX2N5cSevSBF1EHjr2oygqJX64FC';
-              sasl.mechanism=PLAIN
+              security.protocol="SASL_SSL"
+              sasl.jaas.config="org.apache.kafka.common.security.plain.PlainLoginModule required username='UJXR2AHHSOHL2O4K' password='L4piWdT0pE4t+LiP5xLrkfWxmhePL8jdk0LaSX2N5cSevSBF1EHjr2oygqJX64FC';"
+              sasl.mechanism="PLAIN"
               # Required for correctness in Apache Kafka clients prior to 2.6
-              client.dns.lookup=use_all_dns_ips
+              client.dns.lookup="use_all_dns_ips"
             }
         }
 
@@ -175,32 +175,30 @@ data:
     enrich {
       streams {
         in {
-          raw = snowplow_raw_good
+          raw = "snowplow_raw_good"
         }
         out {
-          enriched = snowplow_enriched_good
-          bad = snowplow_enriched_bad
-          partitionKey = user_fingerprint
+          enriched = "snowplow_enriched_good"
+          bad = "snowplow_enriched_bad"
+          partitionKey = "user_fingerprint"
         }
         sourceSink {
-          enabled = kafka
+          enabled = "kafka"
           brokers = "pkc-12576z.us-west2.gcp.confluent.cloud:9092"
           retries = 0
-            producerConf {
-              # Required connection configs for Kafka producer, consumer, and admin
-              security.protocol=SASL_SSL
-              sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username='UJXR2AHHSOHL2O4K' password='L4piWdT0pE4t+LiP5xLrkfWxmhePL8jdk0LaSX2N5cSevSBF1EHjr2oygqJX64FC';
-              sasl.mechanism=PLAIN
-              # Required for correctness in Apache Kafka clients prior to 2.6
-              client.dns.lookup=use_all_dns_ips
-            }
-            consumerConf {
-              security.protocol = SASL_SSL
-              sasl.jaas.config = "org.apache.kafka.common.security.plain.PlainLoginModule required username='UJXR2AHHSOHL2O4K' password='L4piWdT0pE4t+LiP5xLrkfWxmhePL8jdk0LaSX2N5cSevSBF1EHjr2oygqJX64FC';"
-              sasl.mechanism = PLAIN
-              client.dns.lookup = use_all_dns_ips
-              auto.offset.reset = latest
-            }
+          producerConf {
+            security.protocol = "SASL_SSL"
+            sasl.jaas.config = "org.apache.kafka.common.security.plain.PlainLoginModule required username='UJXR2AHHSOHL2O4K' password='L4piWdT0pE4t+LiP5xLrkfWxmhePL8jdk0LaSX2N5cSevSBF1EHjr2oygqJX64FC';"
+            sasl.mechanism = "PLAIN"
+            client.dns.lookup = "use_all_dns_ips"
+          }
+          consumerConf {
+            security.protocol = "SASL_SSL"
+            sasl.jaas.config = "org.apache.kafka.common.security.plain.PlainLoginModule required username='UJXR2AHHSOHL2O4K' password='L4piWdT0pE4t+LiP5xLrkfWxmhePL8jdk0LaSX2N5cSevSBF1EHjr2oygqJX64FC';"
+            sasl.mechanism = "PLAIN"
+            client.dns.lookup = "use_all_dns_ips"
+            auto.offset.reset = "latest"
+          }
         }
         buffer {
           byteLimit = 1000000
