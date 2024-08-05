@@ -1,0 +1,9 @@
+apiVersion: v2
+dependencies:
+  - name: websocket
+    repository: http://chartmuseum.chartmuseum.svc.cluster.local:8080
+    version: 0.0.1-rc.ef95577
+description: websocket example application
+name: websocket
+type: application
+version: 1.0.0

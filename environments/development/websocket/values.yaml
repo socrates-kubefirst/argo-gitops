@@ -1,0 +1,36 @@
+websocket:
+  annotations: |
+    linkerd.io/inject: "enabled"
+  labels: |
+    mirror.linkerd.io/exported: "true"
+  image:
+    repository: ghcr.io/socrates-kubefirst/websocket
+  imagePullSecrets:
+    - name: docker-config
+  ingress:
+    className: nginx
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      
+      
+      
+      nginx.ingress.kubernetes.io/service-upstream: "true"
+    hosts:
+      - host: websocket-development.socrateshlapolosa.org
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: websocket-tls
+        hosts:
+          - websocket-development.socrateshlapolosa.org
+  websocket:
+    host: https://websocket-development.socrateshlapolosa.org/api
+    console: https://kubefirst.socrateshlapolosa.org
+
+  clusterSecretStoreName: development-vault-kv-secret
+  vaultSecretPath: development/websocket
+  configs:
+    configOne: development-config-one
+    configTwo: development-config-two
