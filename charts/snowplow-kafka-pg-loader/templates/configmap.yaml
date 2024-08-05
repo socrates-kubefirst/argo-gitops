@@ -10,6 +10,18 @@ data:
       brokers = "kafka.confluent.svc.cluster.local:9092"
       topic = "snowplow_enriched_good"
       consumerGroupId = "kafkaPGLoader"
+      producerConf {
+        "security.protocol" = "SASL_SSL"
+        "sasl.mechanisms" = "PLAIN"
+        "sasl.username" = "UJXR2AHHSOHL2O4K"
+        "sasl.password" = "L4piWdT0pE4t+LiP5xLrkfWxmhePL8jdk0LaSX2N5cSevSBF1EHjr2oygqJX64FC"
+      }
+      consumerConf {
+        "security.protocol" = "SASL_SSL"
+        "sasl.mechanisms" = "PLAIN"
+        "sasl.username" = "UJXR2AHHSOHL2O4K"
+        "sasl.password" = "L4piWdT0pE4t+LiP5xLrkfWxmhePL8jdk0LaSX2N5cSevSBF1EHjr2oygqJX64FC"
+      }
     }
 
     postgres {
@@ -20,8 +32,3 @@ data:
       groupid = "GroupID"
       numberOfThreads = 1
     }
-  kafka.brokers: kafka.confluent.svc.cluster.local:9092
-  kafka.topic: snowplow_enriched_good
-  postgres.url: jdbc:postgresql://iglu-postgres.snowplow.svc.cluster.local:5432/igludb?currentSchema=atomic
-  postgres.username: sp_user
-  postgres.password: sp_password
