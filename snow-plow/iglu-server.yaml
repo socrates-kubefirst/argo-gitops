@@ -1,78 +1,78 @@
 # Namespace Creation (if not already created)
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: snowplow
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: snowplow
 
 ---
 
 # Iglu PostgreSQL Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: iglu-postgres
-  namespace: snowplow
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: iglu-postgres
-  template:
-    metadata:
-      labels:
-        app: iglu-postgres
-    spec:
-      containers:
-      - name: iglu-postgres
-        image: postgres:13
-        ports:
-        - containerPort: 5432
-        env:
-        - name: POSTGRES_USER
-          value: sp_user
-        - name: POSTGRES_PASSWORD
-          value: sp_password
-        - name: POSTGRES_DB
-          value: igludb
-        volumeMounts:
-        - name: pgdata
-          mountPath: /var/lib/postgresql/data
-          subPath: pgdata
-      volumes:
-      - name: pgdata
-        persistentVolumeClaim:
-          claimName: pgdata-pvc
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: iglu-postgres
+#   namespace: default
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: iglu-postgres
+#   template:
+#     metadata:
+#       labels:
+#         app: iglu-postgres
+#     spec:
+#       containers:
+#       - name: iglu-postgres
+#         image: postgres:13
+#         ports:
+#         - containerPort: 5432
+#         env:
+#         - name: POSTGRES_USER
+#           value: sp_user
+#         - name: POSTGRES_PASSWORD
+#           value: sp_password
+#         - name: POSTGRES_DB
+#           value: igludb
+#         volumeMounts:
+#         - name: pgdata
+#           mountPath: /var/lib/postgresql/data
+#           subPath: pgdata
+#       volumes:
+#       - name: pgdata
+#         persistentVolumeClaim:
+#           claimName: pgdata-pvc
 
 ---
 
 # Iglu PostgreSQL Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: iglu-postgres
-  namespace: snowplow
-spec:
-  selector:
-    app: iglu-postgres
-  ports:
-  - protocol: TCP
-    port: 5432
-    targetPort: 5432
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: iglu-postgres
+#   namespace: default
+# spec:
+#   selector:
+#     app: iglu-postgres
+#   ports:
+#   - protocol: TCP
+#     port: 5432
+#     targetPort: 5432
 
 ---
 
 # PersistentVolumeClaim for Iglu PostgreSQL
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: pgdata-pvc
-  namespace: snowplow
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: pgdata-pvc
+#   namespace: default
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 10Gi
 
 ---
 
@@ -285,33 +285,33 @@ spec:
 ---
 
 # Iglu Server ConfigMap
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: iglu-server-config
-  namespace: snowplow
-data:
-  config.hocon: |
-    {
-      "repoServer": {
-        "interface": "0.0.0.0",
-        "port": 8081
-      },
-      "database": {
-        "host": "iglu-postgres.snowplow.svc.cluster.local",
-        "dbname": "igludb",
-        "username": "sp_user",
-        "password": "sp_password"
-      },
-      "superApiKey": "e5d6a3d6-7b3c-4d0a-9e6a-123456789abc",
-      "adminApiKeys": [
-        {
-          "uid": "admin",
-          "key": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "permissions": ["schemas:create", "schemas:read", "schemas:update", "schemas:delete", "apikeys:create", "apikeys:read", "apikeys:update", "apikeys:delete"]
-        }
-      ]
-    }
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: iglu-server-config
+#   namespace: default
+# data:
+#   config.hocon: |
+#     {
+#       "repoServer": {
+#         "interface": "0.0.0.0",
+#         "port": 8081
+#       },
+#       "database": {
+#         "host": "iglu-postgres.snowplow.svc.cluster.local",
+#         "dbname": "igludb",
+#         "username": "sp_user",
+#         "password": "sp_password"
+#       },
+#       "superApiKey": "e5d6a3d6-7b3c-4d0a-9e6a-123456789abc",
+#       "adminApiKeys": [
+#         {
+#           "uid": "admin",
+#           "key": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+#           "permissions": ["schemas:create", "schemas:read", "schemas:update", "schemas:delete", "apikeys:create", "apikeys:read", "apikeys:update", "apikeys:delete"]
+#         }
+#       ]
+#     }
 
 ---
 
@@ -320,7 +320,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: iglu-server
-  namespace: snowplow
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -331,15 +331,15 @@ spec:
       labels:
         app: iglu-server
     spec:
-      initContainers:
-      - name: wait-for-db-init
-        image: postgres:13
-        command: ['sh', '-c', 'until pg_isready -h iglu-postgres.snowplow.svc.cluster.local -U sp_user -d igludb; do echo waiting for postgres; sleep 2; done']
-        env:
-        - name: POSTGRES_USER
-          value: sp_user
-        - name: POSTGRES_PASSWORD
-          value: sp_password
+      # initContainers:
+      # - name: wait-for-db-init
+      #   image: postgres:13
+      #   command: ['sh', '-c', 'until pg_isready -h iglu-postgres.default.svc.cluster.local -U sp_user -d igludb; do echo waiting for postgres; sleep 2; done']
+      #   env:
+      #   - name: POSTGRES_USER
+      #     value: sp_user
+      #   - name: POSTGRES_PASSWORD
+      #     value: sp_password
       containers:
       - name: iglu-server
         image: snowplow/iglu-server:0.10.1
@@ -368,7 +368,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: iglu-server
-  namespace: snowplow
+  namespace: default
 spec:
   selector:
     app: iglu-server

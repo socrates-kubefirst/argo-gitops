@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: snowplow-platform
-  namespace: argocd
+  namespace: default
 spec:
   project: default
 
@@ -12,10 +12,9 @@ spec:
     path: snow-plow
     directory:
       recurse: true
-
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: confluent
+    namespace: default
 
   syncPolicy:
     automated:
