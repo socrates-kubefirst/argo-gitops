@@ -284,7 +284,7 @@
 
 ---
 
-Iglu Server ConfigMap
+# Iglu Server ConfigMap
 apiVersion: v1
 kind: ConfigMap
 metadata:
