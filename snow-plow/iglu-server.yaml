@@ -300,8 +300,8 @@ data:
       "database": {
         "host": "ep-proud-snow-a55l1fw5.us-east-2.aws.neon.tech",
         "dbname": "igludb",
-        "username": "sp_user",
-        "password": "dcKjguD92WeY"
+        "username": "igludb_owner",
+        "password": "gMLZHXJl4d2q"
       },
       "superApiKey": "e5d6a3d6-7b3c-4d0a-9e6a-123456789abc",
       "adminApiKeys": [
