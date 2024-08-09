@@ -284,34 +284,34 @@
 
 ---
 
-# Iglu Server ConfigMap
-# apiVersion: v1
-# kind: ConfigMap
-# metadata:
-#   name: iglu-server-config
-#   namespace: default
-# data:
-#   config.hocon: |
-#     {
-#       "repoServer": {
-#         "interface": "0.0.0.0",
-#         "port": 8081
-#       },
-#       "database": {
-#         "host": "iglu-postgres.snowplow.svc.cluster.local",
-#         "dbname": "igludb",
-#         "username": "sp_user",
-#         "password": "sp_password"
-#       },
-#       "superApiKey": "e5d6a3d6-7b3c-4d0a-9e6a-123456789abc",
-#       "adminApiKeys": [
-#         {
-#           "uid": "admin",
-#           "key": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-#           "permissions": ["schemas:create", "schemas:read", "schemas:update", "schemas:delete", "apikeys:create", "apikeys:read", "apikeys:update", "apikeys:delete"]
-#         }
-#       ]
-#     }
+Iglu Server ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iglu-server-config
+  namespace: default
+data:
+  config.hocon: |
+    {
+      "repoServer": {
+        "interface": "0.0.0.0",
+        "port": 8081
+      },
+      "database": {
+        "host": "ep-proud-snow-a55l1fw5.us-east-2.aws.neon.tech",
+        "dbname": "igludb",
+        "username": "sp_user",
+        "password": "dcKjguD92WeY"
+      },
+      "superApiKey": "e5d6a3d6-7b3c-4d0a-9e6a-123456789abc",
+      "adminApiKeys": [
+        {
+          "uid": "admin",
+          "key": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "permissions": ["schemas:create", "schemas:read", "schemas:update", "schemas:delete", "apikeys:create", "apikeys:read", "apikeys:update", "apikeys:delete"]
+        }
+      ]
+    }
 
 ---
 
