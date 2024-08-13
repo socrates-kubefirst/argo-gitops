@@ -9,12 +9,12 @@ service:
   type: ClusterIP
   port: 8000
 
-ingress:
-  enabled: true
-  annotations: {}
-  hosts:
-    - paths:
-        - path: /consumer
-          pathType: Prefix
+# ingress:
+#   enabled: true
+#   annotations: {}
+#   hosts:
+#     - paths:
+#         - path: /consumer
+#           pathType: Prefix
 
 resources: {}
